@@ -46,6 +46,8 @@ namespace IVUnitTest
 			Assert::IsTrue(s2 == s1);
 			Assert::AreEqual(s1.c_str(), s2.c_str());
 
+			s2 = LString("test =");
+
 			foo(s1);
 			bar(s1);
 			foo("tempo");

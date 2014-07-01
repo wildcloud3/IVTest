@@ -232,12 +232,6 @@ public:
 		return *this;
 	}
 
-	BiNode_& operator = (_Myt &&_rhs)
-	{
-		swap(_rhs);
-		return *this;
-	}
-
 	~BiNode_()
 	{
 		if (nullptr != m_left)  delete m_left;
@@ -364,12 +358,6 @@ public:
 		Iterator(Iterator &&_rhs) { swap(_rhs); }
 
 		Iterator& operator = (Iterator _rhs)
-		{
-			swap(_rhs);
-			return *this;
-		}
-
-		Iterator& operator = (Iterator &&_rhs)
 		{
 			swap(_rhs);
 			return *this;
