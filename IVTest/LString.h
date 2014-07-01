@@ -43,13 +43,6 @@ public:
 		return *this;
 	}
 
-	LString& operator = (LString &&_rhs)
-	{
-		swap(_rhs);
-		printf("LString::operator = move\n");
-		return *this;
-	}
-
 	~LString()
 	{
 		delete[] m_data;
