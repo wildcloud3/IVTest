@@ -5,3 +5,4 @@ IVUnitTest/Release/
 *.exp
 *.sdf
 ipch/
+*.opensdf
