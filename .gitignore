@@ -1,0 +1,7 @@
+IVTest/Debug/
+IVTest/Release/
+IVUnitTest/Debug/
+IVUnitTest/Release/
+*.exp
+*.sdf
+ipch/
