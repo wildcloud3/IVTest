@@ -15,6 +15,8 @@ int main(int argc, char * argv[])
 	char layout[] = {
 		'1', '2', '2', '3',
 		'1', '2', '2', '3',
+		//'4', '5', '5', '6',
+		//'4', '7', '8', '6',
 		'4', '5', '5', '6',
 		'4', '7', '8', '6',
 		'9', '0', '0', 'A'
@@ -27,6 +29,10 @@ int main(int argc, char * argv[])
 	if (ret == 0)
 	{
 		printf("no solution\n");
+	}
+	else
+	{
+		printf("done, escaped\n");
 	}
 
 	system("pause");

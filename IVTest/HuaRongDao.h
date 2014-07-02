@@ -48,7 +48,7 @@ public:
 		memcpy_s(m_data, rows()*cols(), _rhs.m_data, rows()*cols());
 		m_blocks.swap(BlkMap(_rhs.m_blocks));
 	}
-	Layout_(_Myt &&_rhs) { swap(_rhs); }
+	Layout_(_Myt &&_rhs) : Layout_() { swap(_rhs); }
 
 	_Myt& operator = (_Myt _rhs)
 	{
@@ -61,9 +61,17 @@ public:
 	Block const& operator [] (char _key) const { return m_blocks.at(_idx); } 
 	Block& operator [] (char _key) { return m_blocks.at(_key); } 
 
-	bool operator < (_Myt const &_rhs) const { return strcmp(m_data, _rhs.m_data) < 0; }
-
 	char const * to_string() const { return m_data; }
+	std::string to_mask() const 
+	{
+		_Myt tmp = *this;
+
+		std::fill_n(tmp.m_data, rows()*cols(), '0');
+		for (auto  block : m_blocks)
+			block.second.Render(tmp);
+
+		return tmp.to_string();
+	}
 
 	_Myt& Render()
 	{
@@ -148,7 +156,32 @@ public:
 	template <typename Func>
 	void moves(Func _func)
 	{
+		static_assert(std::is_convertible<Func, std::function < void(_Myt const &) >>::value,
+			"func must be callable as \"void (_Myt const &)\"");
 
+		_Myt tmp;
+		for (auto const & blockPair : m_blocks)
+		{
+			auto id = blockPair.first;
+			auto block = blockPair.second;
+
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(DOWN);
+			if (tmp.isValid(id)) _func(tmp.Render());
+
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(UP);
+			if (tmp.isValid(id)) _func(tmp.Render());
+
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(LEFT);
+			if (tmp.isValid(id)) _func(tmp.Render());
+
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(RIGHT);
+			if (tmp.isValid(id)) _func(tmp.Render());
+		}
+	
 	}
 
 private:
@@ -174,9 +207,9 @@ private:
 		std::swap(m_data, _rhs.m_data);
 		std::swap(m_blocks, _rhs.m_blocks);
 	}
-	char m_data[ROWS*COLS+1];
 
 	BlkMap m_blocks;
+	char   m_data[ROWS*COLS+1];
 };
 
 typedef Layout_<5, 4> Layout;
@@ -194,6 +227,15 @@ public:
 
 		bool operator <  (Point const &_rhs) const { return x < _rhs.x || (x == _rhs.x && y < _rhs.y); }
 		bool operator == (Point const &_rhs) const { return x == _rhs.x && y == _rhs.y; }
+	};
+
+	enum EShape : char
+	{
+		SINGLE = '1',
+		VER = '2',
+		HOR = '3',
+		SQUARE = '4',
+		UNKNOWN = '0'
 	};
 
 	Block() {}
@@ -222,6 +264,39 @@ public:
 	}
 
 	size_t size() const { return m_pos.size(); }
+
+	EShape shape() const 
+	{
+		if (m_pos.size() == 1u)
+		{
+			return SINGLE;
+		}
+		else if (m_pos.size() == 4u)
+		{
+			return SQUARE;
+		}
+		else if (m_pos.size() == 2u)
+		{
+			auto pos_a = m_pos[0];
+			auto pos_b = m_pos[1];
+			if (pos_a.x == pos_b.x && std::abs(pos_a.y - pos_b.y) == 1)
+			{
+				return VER;
+			}
+			else if (pos_a.y == pos_b.y && std::abs(pos_a.x - pos_b.x) == 1)
+			{
+				return HOR;
+			}
+			else
+			{
+				return UNKNOWN;
+			}
+		}
+		else
+		{
+			return UNKNOWN;
+		}
+	}
 
 	Block& Move(EMoveDir _dir)
 	{
@@ -260,8 +335,10 @@ public:
 		return std::any_of(m_pos.cbegin(), m_pos.cend(), checker);
 	}
 
-	void Render(Layout & _canvas, char const _val) const
+	void Render(Layout & _canvas, char _val = -1) const
 	{
+		if (_val == -1) _val = shape();
+
 		if (IsCrossBoundary(_canvas)) return;
 
 		auto rendor = [&_canvas, &_val](Point const &_pt){

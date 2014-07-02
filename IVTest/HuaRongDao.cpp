@@ -7,40 +7,33 @@ namespace HuaRongDao
 {
 	int solve(Layout const &_init)
 	{
-		std::set<Layout> seen;
+		std::set<std::string> seen;
 		std::queue<Layout> q;
 
+		seen.insert(_init.to_mask());
 		q.push(_init);
-		seen.insert(_init);
 
 		while (!q.empty())
 		{
+			printf("Pending Q: %d\n", q.size());
 			auto curr_layout = q.front();
 			q.pop();
 
-			if (curr_layout.isSolved())
-			{
-				printf("done, escaped\n");
-				return 1;
-			}
+			if (curr_layout.isSolved()) { return 1; }
 
 			// if with c++11, the return of moves could be optimised with rvalue
+			/*
 			for (auto nlayout : curr_layout.moves())
 			{
 				auto ret = seen.insert(nlayout);
-
-				if (ret.second)
-				{
-					q.push(nlayout);
-				}
+				if (ret.second) q.push(nlayout);
 			}
+			*/
 
-			/*
 			curr_layout.moves([&seen, &q](Layout const &_layout){
-				auto ret = seen.insert(_layout);
+				auto ret = seen.insert(_layout.to_mask());
 				if (ret.second) q.push(_layout);
 			});
-			*/
 		}
 
 		return 0;

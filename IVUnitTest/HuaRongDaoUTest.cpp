@@ -185,7 +185,7 @@ namespace IVUnitTest
 			Assert::AreEqual(5u, iStart.rows());
 
 			HuaRongDao::Layout tmp;
-			Assert::AreEqual('\0', tmp(tmp.rows()-1, tmp.cols()));
+			Assert::AreEqual('\0', tmp.to_string()[tmp.rows()*tmp.cols()]);
 
 			HuaRongDao::Layout cc = iStart;
 			Assert::AreEqual(iStart.to_string(), cc.to_string());
@@ -193,9 +193,6 @@ namespace IVUnitTest
 
 			HuaRongDao::Layout mvc = HuaRongDao::Layout(layout);
 			Assert::AreEqual(iStart.to_string(), mvc.to_string());
-
-			HuaRongDao::Layout l_2(layout_a);
-			Assert::IsTrue(iStart < l_2);
 
 			tmp = iStart;
 			tmp.Render();
