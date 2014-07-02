@@ -22,6 +22,15 @@ enum EMoveDir : char
 	RIGHT
 };
 
+enum EShape : char
+{
+	SINGLE = '1',
+	VER = '2',
+	HOR = '3',
+	SQUARE = '4',
+	UNKNOWN = '0'
+};
+
 class Block;
 
 // should be initialized by a rows*cols char seq
@@ -41,6 +50,7 @@ public:
 	{
 		memcpy_s(m_data, rows()*cols(), _data, rows()*cols());
 		parseBlocks();
+		Render();
 	}
 
 	Layout_(_Myt const &_rhs) : Layout_()
@@ -61,25 +71,15 @@ public:
 	Block const& operator [] (char _key) const { return m_blocks.at(_idx); } 
 	Block& operator [] (char _key) { return m_blocks.at(_key); } 
 
+	bool operator < (_Myt const &_rhs) const { return strcmp(m_data, _rhs.m_data) < 0; }
+	
 	char const * to_string() const { return m_data; }
-	std::string to_mask() const 
-	{
-		_Myt tmp = *this;
-
-		std::fill_n(tmp.m_data, rows()*cols(), '0');
-		for (auto  block : m_blocks)
-			block.second.Render(tmp);
-
-		return tmp.to_string();
-	}
 
 	_Myt& Render()
 	{
 		std::fill_n(m_data, rows()*cols(), '0');
 		for (auto  block : m_blocks)
-		{
-			block.second.Render(*this, block.first);
-		}
+			block.second.Render(*this);
 		return *this;
 	}
 
@@ -89,13 +89,12 @@ public:
 	bool isSolved() const
 	{
 		auto row_id = rows() - 1;
-		auto base = (*this)(row_id, 1);
 
 		for (size_t j = row_id; j > cols() - 2; --j)
 		{
 			for (size_t i = 1; i < cols() - 1; ++i)
 			{
-				if (base != (*this)(j, i))
+				if (SQUARE != (*this)(j, i))
 					return false;
 			}
 		}
@@ -166,22 +165,21 @@ public:
 			auto block = blockPair.second;
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(DOWN);
+			tmp.m_blocks[id].Move(DOWN);
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(UP);
+			tmp.m_blocks[id].Move(UP);
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(LEFT);
+			tmp.m_blocks[id].Move(LEFT);
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(RIGHT);
+			tmp.m_blocks[id].Move(RIGHT);
 			if (tmp.isValid(id)) _func(tmp.Render());
 		}
-	
 	}
 
 private:
@@ -227,15 +225,6 @@ public:
 
 		bool operator <  (Point const &_rhs) const { return x < _rhs.x || (x == _rhs.x && y < _rhs.y); }
 		bool operator == (Point const &_rhs) const { return x == _rhs.x && y == _rhs.y; }
-	};
-
-	enum EShape : char
-	{
-		SINGLE = '1',
-		VER = '2',
-		HOR = '3',
-		SQUARE = '4',
-		UNKNOWN = '0'
 	};
 
 	Block() {}

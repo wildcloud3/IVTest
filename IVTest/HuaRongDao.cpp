@@ -7,15 +7,15 @@ namespace HuaRongDao
 {
 	int solve(Layout const &_init)
 	{
-		std::set<std::string> seen;
+		std::set<Layout> seen;
 		std::queue<Layout> q;
 
-		seen.insert(_init.to_mask());
+		seen.insert(_init);
 		q.push(_init);
 
 		while (!q.empty())
 		{
-			printf("Pending Q: %d\n", q.size());
+			//printf("Pending Q: %d\n", q.size());
 			auto curr_layout = q.front();
 			q.pop();
 
@@ -31,7 +31,7 @@ namespace HuaRongDao
 			*/
 
 			curr_layout.moves([&seen, &q](Layout const &_layout){
-				auto ret = seen.insert(_layout.to_mask());
+				auto ret = seen.insert(_layout);
 				if (ret.second) q.push(_layout);
 			});
 		}
