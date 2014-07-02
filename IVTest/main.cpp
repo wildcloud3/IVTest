@@ -22,9 +22,9 @@ int main(int argc, char * argv[])
 
 	HuaRongDao::Layout iStart(layout);
 
-	auto ret = HuaRongDao::solve(iStart);
-
-	if (ret == 0)
+	auto ret = HuaRongDao::solve(iStart, true, true);
+	
+	if (!ret.isSolved())
 	{
 		printf("no solution\n");
 	}

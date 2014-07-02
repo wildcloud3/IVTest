@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <functional>
 #include <map>
+#include <queue>
+#include <stack>
 #include <vector>
 
 #ifdef EXPORT_TEST_FUNC
@@ -43,6 +45,7 @@ public:
 
 	typedef Layout_<ROWS, COLS> _Myt;
 	typedef std::map<char, Block> BlkMap;
+	typedef std::queue<std::pair<char, EMoveDir>> MvSteps;
 
 	Layout_() { m_data[rows()*cols()] = '\0'; }
 
@@ -57,6 +60,7 @@ public:
 	{
 		memcpy_s(m_data, rows()*cols(), _rhs.m_data, rows()*cols());
 		m_blocks.swap(BlkMap(_rhs.m_blocks));
+		m_steps.swap(MvSteps(_rhs.m_steps));
 	}
 	Layout_(_Myt &&_rhs) : Layout_() { swap(_rhs); }
 
@@ -72,6 +76,9 @@ public:
 	Block& operator [] (char _key) { return m_blocks.at(_key); } 
 
 	bool operator < (_Myt const &_rhs) const { return strcmp(m_data, _rhs.m_data) < 0; }
+
+	MvSteps const & steps() const { return m_steps; }
+	MvSteps &       steps()       { return m_steps; }
 	
 	char const * to_string() const { return m_data; }
 
@@ -134,19 +141,19 @@ public:
 			auto block = blockPair.second;
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(DOWN);
+			tmp.m_blocks[id].Move(DOWN);
 			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(UP);
+			tmp.m_blocks[id].Move(UP);
 			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(LEFT);
+			tmp.m_blocks[id].Move(LEFT);
 			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 
 			tmp = *this;
-			tmp.m_blocks[id] = Block(block).Move(RIGHT);
+			tmp.m_blocks[id].Move(RIGHT);
 			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 		}
 		return ret;
@@ -166,18 +173,22 @@ public:
 
 			tmp = *this;
 			tmp.m_blocks[id].Move(DOWN);
+			tmp.steps().push({ id, DOWN });
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
 			tmp.m_blocks[id].Move(UP);
+			tmp.steps().push({ id, UP });
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
 			tmp.m_blocks[id].Move(LEFT);
+			tmp.steps().push({ id, LEFT });
 			if (tmp.isValid(id)) _func(tmp.Render());
 
 			tmp = *this;
 			tmp.m_blocks[id].Move(RIGHT);
+			tmp.steps().push({ id, RIGHT });
 			if (tmp.isValid(id)) _func(tmp.Render());
 		}
 	}
@@ -204,10 +215,12 @@ private:
 	{
 		std::swap(m_data, _rhs.m_data);
 		std::swap(m_blocks, _rhs.m_blocks);
+		std::swap(m_steps, _rhs.m_steps);
 	}
 
-	BlkMap m_blocks;
-	char   m_data[ROWS*COLS+1];
+	BlkMap  m_blocks;
+	MvSteps m_steps;
+	char    m_data[ROWS*COLS+1];
 };
 
 typedef Layout_<5, 4> Layout;
@@ -341,6 +354,6 @@ private:
 	std::vector<Point> m_pos;
 };
 
-EXPORT_API int solve(Layout const &_init);
+EXPORT_API Layout solve(Layout const &_init, bool _find_best = false, bool _print_steps = false);
 
 }
