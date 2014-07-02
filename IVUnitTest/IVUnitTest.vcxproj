@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BiTreeUTest.cpp" />
+    <ClCompile Include="HuaRongDaoUTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -98,6 +99,11 @@
   <ItemGroup>
     <ProjectReference Include="..\IVTest\IVTest.vcxproj">
       <Project>{09fdefec-593d-47d4-9e59-ab8b0fd46e7f}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
