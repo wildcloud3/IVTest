@@ -8,6 +8,14 @@
 namespace HuaRongDao
 {
 
+enum EMoveDir : char
+{
+	UP = 0,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
 class Block;
 
 // should be initialized by a rows*cols char seq
@@ -19,6 +27,7 @@ public:
 	inline size_t const cols() const { return COLS; }
 
 	typedef Layout_<ROWS, COLS> _Myt;
+	typedef std::map<char, Block> BlkMap;
 
 	Layout_() { m_data[rows()*cols()] = '\0'; }
 
@@ -31,7 +40,7 @@ public:
 	Layout_(_Myt const &_rhs) : Layout_()
 	{
 		memcpy_s(m_data, rows()*cols(), _rhs.m_data, rows()*cols());
-		m_blocks.swap(std::map<char, Block>(_rhs.m_blocks));
+		m_blocks.swap(BlkMap(_rhs.m_blocks));
 	}
 	Layout_(_Myt &&_rhs) { swap(_rhs); }
 
@@ -43,7 +52,8 @@ public:
 
 	char operator () (int _i0, int _i1) const { return m_data[_i0*cols() + _i1]; } 
 	char& operator () (int _i0, int _i1) { return m_data[_i0*cols() + _i1]; } 
-	char operator [] (int _idx) const { return m_data[_idx]; } 
+	Block const& operator [] (char _key) const { return m_blocks.at(_idx); } 
+	Block& operator [] (char _key) { return m_blocks.at(_key); } 
 
 	bool operator < (_Myt const &_rhs) const { return strcmp(m_data, _rhs.m_data) < 0; }
 
@@ -66,6 +76,7 @@ public:
 	{
 		auto row_id = rows() - 1;
 		auto base = (*this)(row_id, 1);
+
 		for (size_t j = row_id; j > cols() - 2; --j)
 		{
 			for (size_t i = 1; i < cols() - 1; ++i)
@@ -78,68 +89,52 @@ public:
 		return true;
 	}
 
-	bool isValid(char _block_id) const
+	bool isValid(char _block_id = -1) const
 	{
+		if (m_blocks.count(_block_id) == 0)
+		{
+			auto validator = [=](BlkMap::value_type const &_blk){
+				return this->isValid(_blk.first);
+			};
+
+			return std::all_of(m_blocks.cbegin(), m_blocks.cend(), validator);
+		}
+
 		auto &curr_blk = m_blocks.at(_block_id);
 		
-		if (curr_blk.IsCrossBoundary(*this)) return false;
+		auto overlayChecker = [&curr_blk, &_block_id](BlkMap::value_type const &_blk){
+			return curr_blk.IsOverlap(_blk.second) && _block_id != _blk.first;
+		};
 
-		//overlap check
-		for (auto &block : m_blocks)
-			if (curr_blk.IsOverlap(block.second) && _block_id != block.first)
-				return false;
-
-		return true;
+		return !curr_blk.IsCrossBoundary(*this)
+  			  && std::none_of(m_blocks.cbegin(), m_blocks.cend(), overlayChecker);
 	}
 
-	template <typename pariT>
-	_Myt MoveDown(pariT _block)
-	{
-		auto ret = _Myt(*this);
-		ret.m_blocks[_block.first] = _block.second.Move(Block::DOWN);
-		return ret;
-	}
-
-	template <typename pariT>
-	_Myt MoveUp(pariT _block)
-	{
-		auto ret = _Myt(*this);
-		ret.m_blocks[_block.first] = _block.second.Move(Block::UP);
-		return ret;
-	}
-
-	template <typename pariT>
-	_Myt MoveLeft(pariT _block)
-	{
-		auto ret = _Myt(*this);
-		ret.m_blocks[_block.first] = _block.second.Move(Block::LEFT);
-		return ret;
-	}
-
-	template <typename pariT>
-	_Myt MoveRight(pariT _block)
-	{
-		auto ret = _Myt(*this);
-		ret.m_blocks[_block.first] = _block.second.Move(Block::RIGHT);
-		return ret;
-	}
-
-	std::vector<_Myt> moves()
+	std::vector<_Myt> moves() const
 	{
 		std::vector<_Myt> ret;
-		for (auto block : m_blocks)
+		_Myt tmp;
+
+		for (auto const & blockPair : m_blocks)
 		{
-			_Myt tmp = MoveDown(block);
-			if (tmp.isValid(block.first)) ret.push_back(tmp.Render());
+			auto id = blockPair.first;
+			auto block = blockPair.second;
 
-			tmp = MoveUp(block);
-			if (tmp.isValid(block.first)) ret.push_back(tmp.Render());
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(DOWN);
+			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 
-			tmp = MoveLeft(block);
-			if (tmp.isValid(block.first)) ret.push_back(tmp.Render());
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(UP);
+			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 
-			tmp = MoveRight(block);
-			if (tmp.isValid(block.first)) ret.push_back(tmp.Render());
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(LEFT);
+			if (tmp.isValid(id)) ret.push_back(tmp.Render());
+
+			tmp = *this;
+			tmp.m_blocks[id] = Block(block).Move(RIGHT);
+			if (tmp.isValid(id)) ret.push_back(tmp.Render());
 		}
 		return ret;
 	}
@@ -175,7 +170,7 @@ private:
 	}
 	char m_data[ROWS*COLS+1];
 
-	std::map<char, Block> m_blocks;
+	BlkMap m_blocks;
 };
 
 typedef Layout_<5, 4> Layout;
@@ -193,14 +188,6 @@ public:
 
 		bool operator <  (Point const &_rhs) const { return x < _rhs.x || (x == _rhs.x && y < _rhs.y); }
 		bool operator == (Point const &_rhs) const { return x == _rhs.x && y == _rhs.y; }
-	};
-
-	enum EMoveDir : char
-	{
-		UP = 0,
-		DOWN,
-		LEFT,
-		RIGHT
 	};
 
 	Block() {}
