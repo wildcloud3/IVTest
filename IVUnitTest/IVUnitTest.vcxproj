@@ -99,6 +99,11 @@
   <ItemGroup>
     <ProjectReference Include="..\IVTest\IVTest.vcxproj">
       <Project>{09fdefec-593d-47d4-9e59-ab8b0fd46e7f}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

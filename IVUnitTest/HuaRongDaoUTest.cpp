@@ -5,6 +5,13 @@
 
 #include "HuaRongDao.h"
 
+#ifdef _DEBUG
+#	pragma comment(lib, "../Debug/IVTest.lib")
+#else
+#	pragma comment(lib, "../Release/IVTest.lib")
+#endif // _DEBUG
+
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace Microsoft
@@ -230,6 +237,26 @@ namespace IVUnitTest
 			Assert::AreEqual("1223122345564786090A", nexts[2].to_string());
 			Assert::AreEqual("122312234556478690A0", nexts[3].to_string());
 		}
+
+		TEST_METHOD(hrd_layout_solve)
+		{
+			using namespace HuaRongDao;
+
+			char layout[] = {
+				'1', '2', '2', '3',
+				'1', '2', '2', '3',
+				'4', '5', '5', '6',
+				'4', '7', '8', '6',
+				'9', '0', '0', 'A'
+			};
+
+			Layout iStart(layout);
+
+			auto ret = HuaRongDao::solve(iStart);
+			Assert::AreEqual(1, ret);
+		}
+
+
 	};
 }
 	

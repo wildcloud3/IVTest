@@ -5,6 +5,12 @@
 #include <map>
 #include <vector>
 
+#ifdef EXPORT_TEST_FUNC
+#	define EXPORT_API __declspec(dllexport)
+#else
+#	define EXPORT_API __declspec(dllimport)
+#endif
+
 namespace HuaRongDao
 {
 
@@ -269,6 +275,6 @@ private:
 	std::vector<Point> m_pos;
 };
 
-int solve(Layout const &_init);
+EXPORT_API int solve(Layout const &_init);
 
 }
