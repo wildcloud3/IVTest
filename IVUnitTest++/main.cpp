@@ -1,16 +1,14 @@
 #include <UnitTest++.h>
 
 #pragma comment(lib, "UnitTest++.lib")
+#pragma comment(lib, "IVTest.lib")
 
 TEST(DefaultTest)
 {
-	CHECK(false);
+	CHECK(true);
 }
 
 int main()
 {
-	UnitTest::RunAllTests();
-
-	system("pause");
-	return 0;
+	return UnitTest::RunAllTests();
 }
