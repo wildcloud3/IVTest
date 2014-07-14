@@ -79,6 +79,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BiTreeUnitTest.cpp" />
     <ClCompile Include="LStringUnitTest.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
