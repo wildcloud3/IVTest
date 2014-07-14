@@ -6,3 +6,5 @@ IVUnitTest/Release/
 *.sdf
 ipch/
 *.opensdf
+*.tlog
+*.idb

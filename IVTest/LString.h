@@ -11,42 +11,42 @@ public:
 	{
 		m_data[_sz] = '\0';
 
-		printf("LString::constructor default\n");
+		//printf("LString::constructor default\n");
 	}
 
 	LString(char const * _str) : LString(strlen(_str))
 	{
 		strcpy(m_data, _str);
 
-		printf("LString::constructor str\n");
+		//printf("LString::constructor str\n");
 	}
 
 	LString(LString const &_rhs) : LString(_rhs.m_size)
 	{
 		strcpy(m_data, _rhs.m_data);
 
-		printf("LString::constructor copy\n");
+		//printf("LString::constructor copy\n");
 	}
 
 	LString(LString &&_rhs) : LString()
 	{
 		swap(_rhs);
 
-		printf("LString::constructor move\n");
+		//printf("LString::constructor move\n");
 	}
 
 	// this could avoid self assignment check
 	LString& operator = (LString _rhs)
 	{
 		swap(_rhs);
-		printf("LString::operator =\n");
+		//printf("LString::operator =\n");
 		return *this;
 	}
 
 	~LString()
 	{
 		delete[] m_data;
-		printf("LString::deconstructor\n");
+		//printf("LString::deconstructor\n");
 	}
 
 	size_t len() const { return m_size; }

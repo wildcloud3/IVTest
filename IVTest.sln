@@ -7,6 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IVTest", "IVTest\IVTest.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IVUnitTest", "IVUnitTest\IVUnitTest.vcxproj", "{4859D0BD-0166-4C7F-A5FC-1D45663EACBF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest++", "UnitTest++\UnitTest++.vcxproj", "{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IVUnitTest++", "IVUnitTest++\IVUnitTest++.vcxproj", "{AA9D59EE-941F-44BC-BD1C-A990F876B9D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348} = {CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}
+		{09FDEFEC-593D-47D4-9E59-AB8B0FD46E7F} = {09FDEFEC-593D-47D4-9E59-AB8B0FD46E7F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +29,14 @@ Global
 		{4859D0BD-0166-4C7F-A5FC-1D45663EACBF}.Debug|Win32.Build.0 = Debug|Win32
 		{4859D0BD-0166-4C7F-A5FC-1D45663EACBF}.Release|Win32.ActiveCfg = Release|Win32
 		{4859D0BD-0166-4C7F-A5FC-1D45663EACBF}.Release|Win32.Build.0 = Release|Win32
+		{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}.Debug|Win32.Build.0 = Debug|Win32
+		{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}.Release|Win32.ActiveCfg = Release|Win32
+		{CD1D0D4C-C424-40CE-AEB0-00FD8E1BE348}.Release|Win32.Build.0 = Release|Win32
+		{AA9D59EE-941F-44BC-BD1C-A990F876B9D3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA9D59EE-941F-44BC-BD1C-A990F876B9D3}.Debug|Win32.Build.0 = Debug|Win32
+		{AA9D59EE-941F-44BC-BD1C-A990F876B9D3}.Release|Win32.ActiveCfg = Release|Win32
+		{AA9D59EE-941F-44BC-BD1C-A990F876B9D3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
